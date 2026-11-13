@@ -1,54 +1,30 @@
-# Remotion video
+# Sampling demo video
 
-<p align="center">
-  <a href="https://github.com/remotion-dev/logo">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-dark.apng">
-      <img alt="Animated Remotion Logo" src="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-light.gif">
-    </picture>
-  </a>
-</p>
+A ~2½-minute Swedish walkthrough of Sampling (Urval), function by function, ending with Pollflow AI's suggestion
+cards and "Visa i sidan". Built with Remotion from real captures of the product.
 
-Welcome to your Remotion project!
+- `src/storyboard.ts`: chapters, Swedish copy, timing and what each beat zooms to, points at and highlights.
+- `src/components/Tour.tsx`: the camera, cursor, highlights, callouts and caption card.
+- `public/shots/*.png` + `src/data/manifest.json`: 2× captures and the boxes (CSS px in a 1920×1080 viewport).
+- `capture/`: the scripts that made them.
 
-## Commands
+## Preview and render
 
-**Install Dependencies**
-
-```console
-npm i --loglevel=error
+```bash
+npm i
+npx remotion studio          # preview, every chapter is its own composition under "Chapters"
+npx remotion render SamplingDemo out/pollflow-sampling-demo.mp4 --crf=16
 ```
 
-**Start Preview**
+## Re-capturing after UI changes
 
-```console
-npm run dev
-```
+The captures come from an isolated stack, so nobody's dev data is touched: flow-survey-api on port 3100 against a
+`flowsurvey_demo` database, its survey-api stand-in on 4600 (`PORT=4600 node scripts/fake-survey-api.mjs`), and the
+webapp on 5176 (`VITE_API_URL=http://localhost:3100 npx vite --port 5176`). Then:
 
-**Render video**
+1. `node capture/seed.mjs` (draft + live project) and `node capture/seed-live.mjs` (a mid-field live project).
+2. Log in once as `qa@example.com` and save Playwright's storage state as `auth.json` next to the scripts.
+3. `node capture/capture.mjs <dir>`: writes the PNGs and `manifest.json` into `<dir>/capture`; copy them to
+   `public/shots` and `src/data`. The `a*` states call Pollflow AI (two OpenAI turns) and approve one suggestion.
 
-```console
-npx remotion render
-```
-
-**Upgrade Remotion**
-
-```console
-npx remotion upgrade
-```
-
-## Docs
-
-Get started with Remotion by reading the [fundamentals page](https://www.remotion.dev/docs/the-fundamentals).
-
-## Help
-
-We provide help on our [Discord server](https://discord.gg/6VzzNDwUwV).
-
-## Issues
-
-Found an issue with Remotion? [File an issue here](https://github.com/remotion-dev/remotion/issues/new).
-
-## License
-
-Note that for some entities a company license is needed. [Read the terms here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).
+Project ids in the scripts (3, 26) are the ones the seed produced; adjust them if yours differ.

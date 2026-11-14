@@ -5,3 +5,11 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+# Playwright login state for capture/ (holds a session token) and raw capture output.
+auth.json
+capture/capture/
+capture/*.png
+
+# `npm run build` output (remotion bundle).
+build
